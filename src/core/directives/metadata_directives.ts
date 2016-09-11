@@ -1226,151 +1226,30 @@ export class HostListenerMetadata {
   constructor(public eventName: string, public args?: string[]) {}
 }
 
-
-
-
-
-
-
-
-
-
-
-
 /**
- * A wrapper around a module that also includes the providers.
- *
- * @experimental
- */
-export interface ModuleWithProviders {
-  ngModule: Type;
-  providers?: any[];
-}
-
-/**
- * Interface for schema definitions in @NgModules.
- *
- * @experimental
- */
-export interface SchemaMetadata { name: string; }
-
-/**
- * Interface for creating {@link NgModuleMetadata}
- * @experimental
+ * Interface for creating NgModuleMetadata
  */
 export interface NgModuleMetadataType {
-  providers?: any[];
-  declarations?: Array<Type|any[]>;
-  imports?: Array<Type|ModuleWithProviders|any[]>;
-  exports?: Array<Type|any[]>;
-  entryComponents?: Array<Type|any[]>;
-  bootstrap?: Array<Type|any[]>;
-  schemas?: Array<SchemaMetadata|any[]>;
+  providers?: any[]; // Decorated providers
+  declarations?: Array<Type>; // Decorated Components, Directives or Pipes
+  imports?: Array<Type|string>; // Other NgModules or string names of Angular 1 modules
+  // exports?: Array<Type|any[]>; NOT SUPPORTED
+  // entryComponents?: Array<Type|any[]>; NOT SUPPORTED
+  // bootstrap?: Array<Type|any[]>; NOT SUPPORTED
+  // schemas?: Array<SchemaMetadata|any[]>; NOT SUPPORTED
 }
 
 /**
  * Declares an Angular Module.
- * @experimental
  */
 export class NgModuleMetadata extends InjectableMetadata implements NgModuleMetadataType {
-  /**
-   * Defines the set of injectable objects that are available in the injector
-   * of this module.
-   *
-   * ## Simple Example
-   *
-   * Here is an example of a class that can be injected:
-   *
-   * ```
-   * class Greeter {
-   *    greet(name:string) {
-   *      return 'Hello ' + name + '!';
-   *    }
-   * }
-   *
-   * @NgModule({
-   *   providers: [
-   *     Greeter
-   *   ]
-   * })
-   * class HelloWorld {
-   *   greeter:Greeter;
-   *
-   *   constructor(greeter:Greeter) {
-   *     this.greeter = greeter;
-   *   }
-   * }
-   * ```
-   */
+
   get providers(): any[] { return this._providers; }
   private _providers: any[];
 
+  declarations: Array<Type>;
 
-  /**
-   * Specifies a list of directives/pipes that belong to this module.
-   *
-   * ### Example
-   *
-   * ```javascript
-   * @NgModule({
-   *   declarations: [NgFor]
-   * })
-   * class CommonModule {
-   * }
-   * ```
-   */
-  declarations: Array<Type|any[]>;
-
-  /**
-   * Specifies a list of modules whose exported directives/pipes
-   * should be available to templates in this module.
-   * This can also contain {@link ModuleWithProviders}.
-   *
-   * ### Example
-   *
-   * ```javascript
-   * @NgModule({
-   *   imports: [CommonModule]
-   * })
-   * class MainModule {
-   * }
-   * ```
-   */
-  imports: Array<Type|ModuleWithProviders|any[]>;
-
-  /**
-   * Specifies a list of directives/pipes/module that can be used within the template
-   * of any component that is part of an angular module
-   * that imports this angular module.
-   *
-   * ### Example
-   *
-   * ```javascript
-   * @NgModule({
-   *   exports: [NgFor]
-   * })
-   * class CommonModule {
-   * }
-   * ```
-   */
-  exports: Array<Type|any[]>;
-
-  /**
-   * Defines the components that should be compiled as well when
-   * this component is defined. For each components listed here,
-   * Angular will create a {@link ComponentFactory ComponentFactory} and store it in the
-   * {@link ComponentFactoryResolver ComponentFactoryResolver}.
-   */
-  entryComponents: Array<Type|any[]>;
-
-  /**
-   * Defines the components that should be bootstrapped when
-   * this module is bootstrapped. The components listed here
-   * will automatically be added to `entryComponents`.
-   */
-  bootstrap: Array<Type|any[]>;
-
-  schemas: Array<SchemaMetadata|any[]>;
+  imports: Array<Type|string>;
 
   constructor(options: NgModuleMetadataType = {}) {
     // We cannot use destructuring of the constructor argument because `exports` is a
@@ -1379,9 +1258,5 @@ export class NgModuleMetadata extends InjectableMetadata implements NgModuleMeta
     this._providers = options.providers;
     this.declarations = options.declarations;
     this.imports = options.imports;
-    this.exports = options.exports;
-    this.entryComponents = options.entryComponents;
-    this.bootstrap = options.bootstrap;
-    this.schemas = options.schemas;
   }
 }
