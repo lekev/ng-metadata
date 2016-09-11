@@ -69,6 +69,11 @@ export function bundleNgModule( NgModuleClass: Type, existingAngularModule?: ng.
   _normalizeProviders( angularModule, declarations );
   _normalizeProviders( angularModule, providers );
 
+  /**
+   * Process `imports`
+   */
+
+  // 1. imports which are not NgModules
   const nonNgModuleImports: any[] = imports.filter((imported) => {
     if (typeof imported !== 'function') {
       return true
@@ -78,6 +83,19 @@ export function bundleNgModule( NgModuleClass: Type, existingAngularModule?: ng.
   })
 
   _normalizeProviders( angularModule, nonNgModuleImports );
+
+  // 2.imports which are NgModules
+  const NgModuleImports: any[] = imports.filter((imported) => {
+    if (typeof imported !== 'function') {
+      return false
+    }
+    const annotations = reflector.annotations( imported );
+    return isNgModule(ngModuleAnnotation)
+  })
+
+  NgModuleImports.forEach(( importedNgModule: Type ) => {
+    bundleNgModule(importedNgModule, angularModule)
+  })
 
   return angularModule;
 }
